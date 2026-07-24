@@ -1,0 +1,50 @@
+managed implementation in class zbp_i_pay_invoice unique;
+strict ( 2 );
+
+define behavior for ZI_PAY_INVOICE alias Invoice
+persistent table zpay_invoice
+lock master
+authorization master ( global )
+etag master LastChangedAt
+{
+  field ( readonly ) InvoiceUUID, InvoiceId, CompanyCode, SupplierUUID,
+                     InvoiceDate, BaselineDate, PaymentTerms,
+                     GrossAmount, CurrencyCode,
+                     DiscountPercent, DiscountDeadline, LatePenaltyPercent,
+                     DueDate, PaymentBlock,
+                     CreatedBy, CreatedAt,
+                     LocalLastChangedBy, LocalLastChangedAt, LastChangedAt;
+
+  field ( numbering : managed ) InvoiceUUID;
+
+  internal update;
+
+  // Simulated payment: OPEN -> PAID (no real bank transfer)
+  action ( features : instance ) simulatePayment result [1] $self;
+
+  mapping for zpay_invoice
+    {
+      InvoiceUUID        = invoice_uuid;
+      InvoiceId          = invoice_id;
+      CompanyCode        = company_code;
+      SupplierUUID       = supplier_uuid;
+      InvoiceDate        = invoice_date;
+      BaselineDate       = baseline_date;
+      PaymentTerms       = payment_terms;
+      GrossAmount        = gross_amount;
+      CurrencyCode       = currency_code;
+      DiscountPercent    = discount_percent;
+      DiscountDeadline   = discount_deadline;
+      LatePenaltyPercent = late_penalty_percent;
+      DueDate            = due_date;
+      PaymentBlock       = payment_block;
+      PaymentStatus      = payment_status;
+      SimulatedPaidAt    = simulated_paid_at;
+      SimulatedPaidBy    = simulated_paid_by;
+      CreatedBy          = created_by;
+      CreatedAt          = created_at;
+      LocalLastChangedBy = local_last_changed_by;
+      LocalLastChangedAt = local_last_changed_at;
+      LastChangedAt      = last_changed_at;
+    }
+}

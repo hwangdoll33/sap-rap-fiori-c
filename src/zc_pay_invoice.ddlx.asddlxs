@@ -1,0 +1,150 @@
+@Metadata.layer: #CORE
+@UI: {
+  headerInfo: {
+    typeName: 'Invoice',
+    typeNamePlural: 'Invoices',
+    title: { type: #STANDARD, value: 'InvoiceId' },
+    description: { type: #STANDARD, value: 'SupplierName' }
+  },
+  presentationVariant: [{
+    sortOrder: [
+      { by: 'PriorityGroup', direction: #ASC },
+      { by: 'PenaltyIndicator', direction: #DESC },
+      { by: 'DaysOverdue', direction: #DESC },
+      { by: 'TotalScore', direction: #DESC },
+      { by: 'DueDate', direction: #ASC }
+    ],
+    visualizations: [{ type: #AS_LINEITEM }]
+  }]
+}
+annotate view ZC_PAY_INVOICE with
+{
+  @UI.facet: [
+    { id: 'idInvoice',
+      purpose: #STANDARD,
+      type: #IDENTIFICATION_REFERENCE,
+      label: 'Invoice Details',
+      position: 10 },
+    { id: 'idScores',
+      purpose: #STANDARD,
+      type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'Scores',
+      label: 'Priority Scoring',
+      position: 20 },
+    { id: 'idPayment',
+      purpose: #STANDARD,
+      type: #FIELDGROUP_REFERENCE,
+      targetQualifier: 'Payment',
+      label: 'Payment',
+      position: 30 }
+  ]
+
+  @UI: { lineItem:       [ { position: 10, importance: #HIGH } ],
+         identification: [ { position: 10 } ] }
+  InvoiceId;
+
+  @UI: { lineItem:       [ { position: 20, importance: #HIGH } ],
+         identification: [ { position: 20 } ],
+         selectionField: [ { position: 20 } ] }
+  SupplierName;
+
+  @UI: { identification: [ { position: 25 } ] }
+  SupplierGrade;
+
+  @UI: { lineItem:       [ { position: 30, importance: #HIGH } ],
+         identification: [ { position: 30 } ] }
+  GrossAmount;
+
+  @UI: { lineItem:       [ { position: 40, importance: #HIGH } ],
+         identification: [ { position: 40 } ],
+         selectionField: [ { position: 40 } ] }
+  DueDate;
+
+  @UI: { lineItem:       [ { position: 45, importance: #MEDIUM } ] }
+  DaysToDue;
+
+  @UI: { identification: [ { position: 50 } ] }
+  PaymentTerms;
+
+  @UI: { identification: [ { position: 55 } ] }
+  DiscountPercent;
+
+  @UI: { identification: [ { position: 60 } ] }
+  DiscountDeadline;
+
+  @UI: { fieldGroup: [ { qualifier: 'Scores', position: 5 } ] }
+  DiscountApr;
+
+  @UI: { lineItem:   [ { position: 50, importance: #MEDIUM } ],
+         fieldGroup: [ { qualifier: 'Scores', position: 10 } ] }
+  FinancialScore;
+
+  @UI: { lineItem:   [ { position: 60, importance: #MEDIUM } ],
+         fieldGroup: [ { qualifier: 'Scores', position: 20 } ] }
+  SupplierScore;
+
+  @UI: { lineItem:   [ { position: 70, importance: #MEDIUM } ],
+         fieldGroup: [ { qualifier: 'Scores', position: 30 } ] }
+  TimeScore;
+
+  @UI: { lineItem:   [ { position: 80, importance: #HIGH,
+                         criticality: 'ScoreCriticality' } ],
+         fieldGroup: [ { qualifier: 'Scores', position: 40,
+                         criticality: 'ScoreCriticality' } ] }
+  TotalScore;
+
+  @UI: { lineItem:       [ { position: 90, importance: #HIGH,
+                             criticality: 'ScoreCriticality' } ],
+         fieldGroup:     [ { qualifier: 'Scores', position: 50,
+                             criticality: 'ScoreCriticality' } ],
+         selectionField: [ { position: 10 } ] }
+  RecommendationText;
+
+  @UI: { lineItem:   [ { position: 100, importance: #MEDIUM } ],
+         fieldGroup: [ { qualifier: 'Scores', position: 60 } ] }
+  RecommendationReason;
+
+  @UI: { lineItem:       [ { position: 110, importance: #HIGH },
+                           { type: #FOR_ACTION,
+                             dataAction: 'simulatePayment',
+                             label: 'Simulate Payment' } ],
+         fieldGroup:     [ { qualifier: 'Payment', position: 10 } ],
+         identification: [ { type: #FOR_ACTION,
+                             dataAction: 'simulatePayment',
+                             label: 'Simulate Payment' } ],
+         selectionField: [ { position: 30 } ] }
+  PaymentStatus;
+
+  @UI: { fieldGroup: [ { qualifier: 'Payment', position: 20 } ] }
+  PaymentBlock;
+
+  @UI: { fieldGroup: [ { qualifier: 'Payment', position: 30 } ] }
+  LatePenaltyPercent;
+
+  @UI: { fieldGroup: [ { qualifier: 'Payment', position: 40 } ] }
+  SimulatedPaidAt;
+
+  @UI: { fieldGroup: [ { qualifier: 'Payment', position: 50 } ] }
+  SimulatedPaidBy;
+
+  @UI.hidden: true
+  InvoiceUUID;
+
+  @UI.hidden: true
+  SupplierUUID;
+
+  @UI.hidden: true
+  PriorityGroup;
+
+  @UI.hidden: true
+  PenaltyIndicator;
+
+  @UI.hidden: true
+  DaysOverdue;
+
+  @UI.hidden: true
+  ScoreCriticality;
+
+  @UI.hidden: true
+  LastChangedAt;
+}

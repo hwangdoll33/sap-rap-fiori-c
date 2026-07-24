@@ -1,0 +1,5 @@
+@EndUserText.label: 'PayWise AP Payment Priority Service'
+define service ZUI_PAYWISE {
+  expose ZC_PAY_INVOICE  as Invoice;
+  expose ZC_PAY_SUPPLIER as Supplier;
+}

@@ -54,145 +54,180 @@ CLASS zcl_pay_data_gen IMPLEMENTATION.
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp ) ).
 
+        " Boundary-case coverage:
+        "  PWI0001 no discount, mid-term due          PWI0002 active cash discount (2/10 net 30)
+        "  PWI0003 expired discount, due soon         PWI0004 due today
+        "  PWI0005 overdue + penalty accruing         PWI0006 overdue, no penalty
+        "  PWI0007 payment block (HOLD)               PWI0008 strategic supplier + discount
+        "  PWI0009 low importance, far due            PWI0010 discount deadline today
+        "  PWI0011 penalty rate, due in 6 days        PWI0012 due in 15 days
+        "  PWI0013 already PAID                       PWI0014 already PAID
         invoices = VALUE #(
           ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
             invoice_id = 'PWI0001' company_code = gc_company_code
             supplier_uuid = supplier_1 invoice_date = today - 20
+            baseline_date = today - 20 payment_terms = 'NET30'
             gross_amount = '1250000.00' currency_code = gc_currency
-            discount_percent = '0.00' due_date = today + 10
-            payment_status = 'OPEN'
+            discount_percent = '0.00' late_penalty_percent = '0.00'
+            due_date = today + 10 payment_status = 'OPEN'
             created_by = sy-uname created_at = timestamp
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp )
           ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
             invoice_id = 'PWI0002' company_code = gc_company_code
-            supplier_uuid = supplier_2 invoice_date = today - 10
+            supplier_uuid = supplier_2 invoice_date = today - 5
+            baseline_date = today - 5 payment_terms = '2/10NET30'
             gross_amount = '2400000.00' currency_code = gc_currency
             discount_percent = '2.00' discount_deadline = today + 5
-            due_date = today + 30 payment_status = 'OPEN'
+            late_penalty_percent = '0.00'
+            due_date = today + 25 payment_status = 'OPEN'
             created_by = sy-uname created_at = timestamp
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp )
           ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
             invoice_id = 'PWI0003' company_code = gc_company_code
             supplier_uuid = supplier_3 invoice_date = today - 30
+            baseline_date = today - 30 payment_terms = '1.5/10NET30'
             gross_amount = '3750000.00' currency_code = gc_currency
             discount_percent = '1.50' discount_deadline = today - 5
-            due_date = today + 5 payment_status = 'OPEN'
+            late_penalty_percent = '0.00'
+            due_date = today + 3 payment_status = 'OPEN'
             created_by = sy-uname created_at = timestamp
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp )
           ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
             invoice_id = 'PWI0004' company_code = gc_company_code
-            supplier_uuid = supplier_4 invoice_date = today - 25
-            gross_amount = '5100000.00' currency_code = gc_currency
-            discount_percent = '0.00' due_date = today
-            payment_status = 'OPEN'
+            supplier_uuid = supplier_2 invoice_date = today - 30
+            baseline_date = today - 30 payment_terms = 'NET30'
+            gross_amount = '860000.00' currency_code = gc_currency
+            discount_percent = '0.00' late_penalty_percent = '0.00'
+            due_date = today payment_status = 'OPEN'
             created_by = sy-uname created_at = timestamp
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp )
           ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
             invoice_id = 'PWI0005' company_code = gc_company_code
-            supplier_uuid = supplier_5 invoice_date = today - 45
-            gross_amount = '8200000.00' currency_code = gc_currency
-            discount_percent = '3.00' discount_deadline = today - 20
+            supplier_uuid = supplier_4 invoice_date = today - 40
+            baseline_date = today - 40 payment_terms = 'NET30'
+            gross_amount = '5200000.00' currency_code = gc_currency
+            discount_percent = '0.00' late_penalty_percent = '6.00'
             due_date = today - 10 payment_status = 'OPEN'
             created_by = sy-uname created_at = timestamp
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp )
           ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
             invoice_id = 'PWI0006' company_code = gc_company_code
-            supplier_uuid = supplier_1 invoice_date = today - 5
-            gross_amount = '680000.00' currency_code = gc_currency
-            discount_percent = '1.00' discount_deadline = today + 2
-            due_date = today + 20 payment_status = 'OPEN'
+            supplier_uuid = supplier_1 invoice_date = today - 33
+            baseline_date = today - 33 payment_terms = 'NET30'
+            gross_amount = '430000.00' currency_code = gc_currency
+            discount_percent = '0.00' late_penalty_percent = '0.00'
+            due_date = today - 3 payment_status = 'OPEN'
             created_by = sy-uname created_at = timestamp
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp )
           ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
             invoice_id = 'PWI0007' company_code = gc_company_code
-            supplier_uuid = supplier_2 invoice_date = today - 60
-            gross_amount = '1900000.00' currency_code = gc_currency
-            discount_percent = '0.00' due_date = today - 1
+            supplier_uuid = supplier_3 invoice_date = today - 15
+            baseline_date = today - 15 payment_terms = 'NET30'
+            gross_amount = '1980000.00' currency_code = gc_currency
+            discount_percent = '0.00' late_penalty_percent = '0.00'
+            due_date = today + 5 payment_block = 'A'
             payment_status = 'OPEN'
             created_by = sy-uname created_at = timestamp
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp )
           ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
             invoice_id = 'PWI0008' company_code = gc_company_code
-            supplier_uuid = supplier_3 invoice_date = today - 2
-            gross_amount = '4300000.00' currency_code = gc_currency
-            discount_percent = '2.50' discount_deadline = today + 7
-            due_date = today + 45 payment_status = 'OPEN'
+            supplier_uuid = supplier_5 invoice_date = today - 3
+            baseline_date = today - 3 payment_terms = '2/10NET45'
+            gross_amount = '8700000.00' currency_code = gc_currency
+            discount_percent = '2.00' discount_deadline = today + 7
+            late_penalty_percent = '0.00'
+            due_date = today + 42 payment_status = 'OPEN'
             created_by = sy-uname created_at = timestamp
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp )
           ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
             invoice_id = 'PWI0009' company_code = gc_company_code
-            supplier_uuid = supplier_4 invoice_date = today - 15
-            gross_amount = '9600000.00' currency_code = gc_currency
-            discount_percent = '1.75' discount_deadline = today + 1
-            due_date = today + 15 payment_status = 'OPEN'
+            supplier_uuid = supplier_1 invoice_date = today
+            baseline_date = today payment_terms = 'NET45'
+            gross_amount = '320000.00' currency_code = gc_currency
+            discount_percent = '0.00' late_penalty_percent = '0.00'
+            due_date = today + 45 payment_status = 'OPEN'
             created_by = sy-uname created_at = timestamp
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp )
           ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
             invoice_id = 'PWI0010' company_code = gc_company_code
-            supplier_uuid = supplier_5 invoice_date = today - 35
-            gross_amount = '15000000.00' currency_code = gc_currency
-            discount_percent = '0.50' discount_deadline = today - 10
-            due_date = today + 1 payment_status = 'OPEN'
+            supplier_uuid = supplier_4 invoice_date = today - 10
+            baseline_date = today - 10 payment_terms = '1/10NET30'
+            gross_amount = '2150000.00' currency_code = gc_currency
+            discount_percent = '1.00' discount_deadline = today
+            late_penalty_percent = '0.00'
+            due_date = today + 20 payment_status = 'OPEN'
             created_by = sy-uname created_at = timestamp
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp )
           ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
             invoice_id = 'PWI0011' company_code = gc_company_code
-            supplier_uuid = supplier_3 invoice_date = today - 40
-            gross_amount = '3200000.00' currency_code = gc_currency
-            discount_percent = '0.00' due_date = today - 5
-            payment_status = 'PAID' simulated_paid_at = timestamp
-            simulated_paid_by = sy-uname
+            supplier_uuid = supplier_5 invoice_date = today - 24
+            baseline_date = today - 24 payment_terms = 'NET30'
+            gross_amount = '6600000.00' currency_code = gc_currency
+            discount_percent = '0.00' late_penalty_percent = '8.00'
+            due_date = today + 6 payment_status = 'OPEN'
             created_by = sy-uname created_at = timestamp
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp )
           ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
             invoice_id = 'PWI0012' company_code = gc_company_code
-            supplier_uuid = supplier_5 invoice_date = today - 18
-            gross_amount = '7500000.00' currency_code = gc_currency
-            discount_percent = '2.00' discount_deadline = today - 8
-            due_date = today + 12 payment_status = 'PAID'
+            supplier_uuid = supplier_2 invoice_date = today - 15
+            baseline_date = today - 15 payment_terms = 'NET30'
+            gross_amount = '1120000.00' currency_code = gc_currency
+            discount_percent = '0.00' late_penalty_percent = '0.00'
+            due_date = today + 15 payment_status = 'OPEN'
+            created_by = sy-uname created_at = timestamp
+            local_last_changed_by = sy-uname local_last_changed_at = timestamp
+            last_changed_at = timestamp )
+          ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
+            invoice_id = 'PWI0013' company_code = gc_company_code
+            supplier_uuid = supplier_3 invoice_date = today - 50
+            baseline_date = today - 50 payment_terms = 'NET30'
+            gross_amount = '2750000.00' currency_code = gc_currency
+            discount_percent = '0.00' late_penalty_percent = '0.00'
+            due_date = today - 20 payment_status = 'PAID'
+            simulated_paid_at = timestamp simulated_paid_by = sy-uname
+            created_by = sy-uname created_at = timestamp
+            local_last_changed_by = sy-uname local_last_changed_at = timestamp
+            last_changed_at = timestamp )
+          ( invoice_uuid = cl_system_uuid=>create_uuid_x16_static( )
+            invoice_id = 'PWI0014' company_code = gc_company_code
+            supplier_uuid = supplier_5 invoice_date = today - 35
+            baseline_date = today - 35 payment_terms = '2/10NET30'
+            gross_amount = '4300000.00' currency_code = gc_currency
+            discount_percent = '2.00' discount_deadline = today - 25
+            late_penalty_percent = '0.00'
+            due_date = today - 5 payment_status = 'PAID'
             simulated_paid_at = timestamp simulated_paid_by = sy-uname
             created_by = sy-uname created_at = timestamp
             local_last_changed_by = sy-uname local_last_changed_at = timestamp
             last_changed_at = timestamp ) ).
 
-        DELETE FROM zpay_invoice
-          WHERE company_code = @gc_company_code
-            AND invoice_id BETWEEN 'PWI0001' AND 'PWI0012'.
-
-        DELETE FROM zpay_supplier
-          WHERE supplier_id BETWEEN 'SUP0001' AND 'SUP0005'.
+        DELETE FROM zpay_invoice.
+        DELETE FROM zpay_supplier.
 
         INSERT zpay_supplier FROM TABLE @suppliers.
-        IF sy-subrc <> 0 OR sy-dbcnt <> lines( suppliers ).
-          ROLLBACK WORK.
-          out->write( 'Supplier insertion failed; changes rolled back.' ).
-          RETURN.
-        ENDIF.
-
+        DATA(supplier_count) = sy-dbcnt.
         INSERT zpay_invoice FROM TABLE @invoices.
-        IF sy-subrc <> 0 OR sy-dbcnt <> lines( invoices ).
-          ROLLBACK WORK.
-          out->write( 'Invoice insertion failed; changes rolled back.' ).
-          RETURN.
-        ENDIF.
+        DATA(invoice_count) = sy-dbcnt.
 
         COMMIT WORK.
-        out->write( |Created { lines( suppliers ) } suppliers and { lines( invoices ) } invoices.| ).
 
-      CATCH cx_uuid_error cx_sy_open_sql_db INTO DATA(error).
-        ROLLBACK WORK.
-        out->write( |Sample data generation failed: { error->get_text( ) }| ).
+        out->write( |PayWise sample data regenerated.| ).
+        out->write( |Suppliers inserted: { supplier_count }| ).
+        out->write( |Invoices inserted:  { invoice_count }| ).
+
+      CATCH cx_uuid_error INTO DATA(uuid_error).
+        out->write( |UUID generation failed: { uuid_error->get_text( ) }| ).
     ENDTRY.
   ENDMETHOD.
 ENDCLASS.
